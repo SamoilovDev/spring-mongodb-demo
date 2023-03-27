@@ -1,7 +1,7 @@
-package com.example.springclouddeno.controller;
+package com.example.springclouddemo.controller;
 
-import com.example.springclouddeno.domain.Health;
-import com.example.springclouddeno.domain.HealthStatus;
+import com.example.springclouddemo.domain.Health;
+import com.example.springclouddemo.domain.HealthStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

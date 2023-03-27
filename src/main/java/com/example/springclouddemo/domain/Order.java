@@ -1,4 +1,4 @@
-package com.example.springclouddeno.domain;
+package com.example.springclouddemo.domain;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +13,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serial;
 import java.io.Serializable;

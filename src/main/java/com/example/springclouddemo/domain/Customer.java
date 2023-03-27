@@ -1,4 +1,4 @@
-package com.example.springclouddeno.domain;
+package com.example.springclouddemo.domain;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -28,7 +28,19 @@ public class CustomerOrderService {
         customerRepository.save(foundedCustomer);
 
         return ResponseEntity.ok(
-                customerRepository.findById(customerId).map(customer -> Map.of("order_id"))
+                 Map.of(
+                         "order_id",
+                         foundedCustomer.getOrders()
+                                 .stream()
+                                 .filter(
+                                         _order ->
+                                                 _order.getCreatedAt().equals(order.getCreatedAt())
+                                                 && _order.getProducts().equals(order.getProducts())
+                                 )
+                                 .findFirst()
+                                 .orElseThrow(OrderPostingException::new)
+                                 .getId()
+                 )
         );
     }
 }
@@ -36,4 +48,9 @@ public class CustomerOrderService {
 @NoArgsConstructor
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Customer doesn't exist!")
 class CustomerNotFoundException extends RuntimeException {
+}
+
+@NoArgsConstructor
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Impossible to add this order!")
+class OrderPostingException extends RuntimeException {
 }

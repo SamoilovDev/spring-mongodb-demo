@@ -1,4 +1,4 @@
-package com.example.springclouddeno.domain;
+package com.example.springclouddemo.domain;
 
 public enum PaymentType {
 
