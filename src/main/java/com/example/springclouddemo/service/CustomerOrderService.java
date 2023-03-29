@@ -11,32 +11,31 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.util.Set;
 
-import static com.example.springclouddemo.constants.EntityName.CUSTOMER;
-import static com.example.springclouddemo.constants.EntityName.ORDER;
+import static com.example.springclouddemo.constants.EntityName.*;
 
 @Service
 @AllArgsConstructor
 public class CustomerOrderService {
 
     @Value("${spring.application.name}")
-    private String applicationName;
+    private static String applicationName;
 
     @Autowired
     private final CustomerRepository customerRepository;
-
 
     public ResponseEntity<Order> postNewOrder(String customerId, Order order) {
         Customer foundedCustomer = customerRepository.findById(customerId)
                 .orElseThrow(CustomerNotFoundException::new);
 
-        foundedCustomer.addOrder(order);
+        foundedCustomer.getOrders().add(order);
         customerRepository.save(foundedCustomer);
 
         String message = "A new %s is created with identifier %s".formatted(ORDER, order.getId());
 
-        return ResponseEntity.ok()
+        return ResponseEntity.created(URI.create("/api/v1/customerOrders/%s".formatted(customerId)))
                 .header(ResponseHeader.MESSAGE.formatted(applicationName), message)
                 .header(ResponseHeader.PARAMS.formatted(applicationName), customerId)
                 .body(order);
@@ -52,8 +51,8 @@ public class CustomerOrderService {
                 .orElseThrow(OrderNotFoundException::new);
         String message = "The %s with identifier %s was updated".formatted(ORDER, order.getId());
 
-        foundedCustomer.getOrders().remove(oldOrder); // todo change
-        foundedCustomer.getOrders().add(order);
+        foundedCustomer.getOrders().remove(oldOrder);
+        foundedCustomer.getOrders().add(oldOrder.copyOf(order));
         customerRepository.save(foundedCustomer);
 
         return ResponseEntity.ok()
@@ -73,6 +72,7 @@ public class CustomerOrderService {
         return ResponseEntity.ok()
                 .header(ResponseHeader.MESSAGE.formatted(applicationName), message)
                 .header(ResponseHeader.PARAMS.formatted(applicationName), customerId)
+                .header(ResponseHeader.SIZE.formatted(applicationName), String.valueOf(allOrders.size()))
                 .body(allOrders);
     }
 

@@ -60,4 +60,17 @@ public class Order implements Serializable {
     @NotEmpty
     private Set<@Valid Product> products;
 
+    public Order copyOf(Order that) {
+        this.version += 1;
+        this.updatedAt = Instant.now();
+        this.status = that.getStatus();
+        this.paymentStatus = that.getPaymentStatus();
+        this.paymentMethod = that.getPaymentMethod();
+        this.paymentDetails = that.getPaymentDetails();
+        this.shippingAddress = that.getShippingAddress();
+        this.products = that.getProducts();
+
+        return this;
+    }
+
 }

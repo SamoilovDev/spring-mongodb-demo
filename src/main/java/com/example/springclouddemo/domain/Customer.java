@@ -62,13 +62,16 @@ public class Customer implements Serializable {
     @Field("billing_address")
     private Address billingAddress;
 
-    public Customer addOrder(Order order) {
-        this.orders.add(order);
-        return this;
-    }
+    public Customer copyOf(Customer that) {
+        this.firstName = that.getFirstName();
+        this.middleName = that.getMiddleName();
+        this.lastName = that.getLastName();
+        this.paymentDetails = that.getPaymentDetails();
+        this.updatedAt = Instant.now();
+        this.version += 1;
+        this.orders = that.getOrders();
+        this.billingAddress = that.getBillingAddress();
 
-    public Customer removeOrder(Order order) {
-        this.orders.remove(order);
         return this;
     }
 

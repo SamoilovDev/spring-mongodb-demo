@@ -12,12 +12,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -48,9 +45,7 @@ public class CustomerOrderController {
             @Valid @RequestBody Order order
     ) {
         log.debug("REST request to save Order : {} for Customer ID: {}", order, customerId);
-        if (Objects.nonNull(order.getId())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "A new order cannot already have an ID");
-        } else return customerOrderService.postNewOrder(customerId, order);
+        return customerOrderService.postNewOrder(customerId, order);
     }
 
     @Operation(summary = "Updating order from the customer with identifier at the path")
