@@ -1,6 +1,9 @@
 package com.example.springclouddemo.controller;
 
-import com.example.springclouddemo.domain.Order;
+import com.example.springclouddemo.entity.OrderEntity;
+import com.example.springclouddemo.enums.OrderStatus;
+import com.example.springclouddemo.dto.OrderDto;
+import com.example.springclouddemo.exceptions.OrderAlreadyExistsException;
 import com.example.springclouddemo.service.CustomerOrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +33,7 @@ public class CustomerOrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order was posted successfully!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Order.class)) }),
+                            schema = @Schema(implementation = OrderDto.class)) }),
             @ApiResponse(responseCode = "400", description = "CustomerId at the path is blank!",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Customer not found!",
@@ -40,19 +43,21 @@ public class CustomerOrderController {
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content) })
     @PostMapping("/customerOrders/{customerId}")
-    public ResponseEntity<Order> postNewOrder(
+    public ResponseEntity<OrderDto> postNewOrder(
             @NotBlank @PathVariable String customerId,
-            @Valid @RequestBody Order order
+            @Valid @RequestBody OrderEntity order
     ) {
         log.debug("REST request to save Order : {} for Customer ID: {}", order, customerId);
-        return customerOrderService.postNewOrder(customerId, order);
+        if (order.getId().isEmpty()) {
+            return customerOrderService.postNewOrder(customerId, order);
+        } else throw new OrderAlreadyExistsException();
     }
 
     @Operation(summary = "Updating order from the customer with identifier at the path")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order was updated successfully!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Order.class)) }),
+                            schema = @Schema(implementation = OrderDto.class)) }),
             @ApiResponse(responseCode = "400", description = "CustomerId at the path is blank!",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Customer or order not found!",
@@ -60,9 +65,9 @@ public class CustomerOrderController {
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content) })
     @PutMapping("/customerOrders/{customerId}")
-    public ResponseEntity<Order> updateOrder(
+    public ResponseEntity<OrderDto> updateOrder(
             @NotBlank @PathVariable String customerId,
-            @Valid @RequestBody Order order
+            @Valid @RequestBody OrderDto order
     ) {
         log.debug("REST request to update Order : {} for Customer ID: {}", order, customerId);
         return customerOrderService.updateOrder(customerId, order);
@@ -72,7 +77,7 @@ public class CustomerOrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Orders were returned successfully!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Order.class)) }),
+                            schema = @Schema(implementation = OrderDto.class)) }),
             @ApiResponse(responseCode = "400", description = "CustomerId at the path is blank!",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Customer not found!",
@@ -80,16 +85,18 @@ public class CustomerOrderController {
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content) })
     @GetMapping("/customerOrders/{customerId}")
-    public ResponseEntity<Set<Order>> getAllOrders(@NotBlank @PathVariable String customerId) {
+    public ResponseEntity<Set<OrderDto>> getAllOrders(
+            @NotBlank @PathVariable String customerId,
+            @RequestParam(required = false) String status) {
         log.debug("REST request to get all Orders for Customer: {}", customerId);
-        return customerOrderService.getAllOrders(customerId);
+        return customerOrderService.getAllCustomerOrdersByIdAndStatus(customerId, OrderStatus.valueOf(status));
     }
 
     @Operation(summary = "Getting order with identifier at the path from the customer with identifier at the path")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order was returned successfully!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Order.class)) }),
+                            schema = @Schema(implementation = OrderDto.class)) }),
             @ApiResponse(responseCode = "400", description = "CustomerId or orderId at the path is blank!",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Customer or order not found!",
@@ -97,7 +104,7 @@ public class CustomerOrderController {
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content) })
     @GetMapping("/customerOrders/{customerId}/{orderId}")
-    public ResponseEntity<Order> getOrder(
+    public ResponseEntity<OrderDto> getOrder(
             @NotBlank @PathVariable String customerId,
             @NotBlank @PathVariable String orderId
     ) {

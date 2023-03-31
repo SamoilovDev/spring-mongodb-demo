@@ -1,6 +1,7 @@
-package com.example.springclouddemo.domain;
+package com.example.springclouddemo.entity;
 
-import jakarta.validation.constraints.NotNull;
+import com.example.springclouddemo.component.Mapper;
+import com.example.springclouddemo.dto.CustomerDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,13 +18,14 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Document(collection = "customer")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer implements Serializable {
+public class CustomerEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -31,14 +33,12 @@ public class Customer implements Serializable {
     @Id
     private String id;
 
-    @NotNull
     @Field("first_name")
     private String firstName;
 
     @Field("middle_name")
     private String middleName;
 
-    @NotNull
     @Field("last_name")
     private String lastName;
 
@@ -57,20 +57,22 @@ public class Customer implements Serializable {
     public Integer version;
 
     @Field("orders")
-    private Set<Order> orders = new HashSet<>();
+    private Set<OrderEntity> orders = new HashSet<>();
 
     @Field("billing_address")
-    private Address billingAddress;
+    private AddressEntity billingAddress;
 
-    public Customer copyOf(Customer that) {
+    public CustomerEntity copyOf(CustomerDto that, Mapper mapper) {
         this.firstName = that.getFirstName();
         this.middleName = that.getMiddleName();
         this.lastName = that.getLastName();
         this.paymentDetails = that.getPaymentDetails();
         this.updatedAt = Instant.now();
         this.version += 1;
-        this.orders = that.getOrders();
-        this.billingAddress = that.getBillingAddress();
+        this.orders = that.getOrders().stream()
+                .map(mapper::mapDtoToOrder)
+                .collect(Collectors.toSet());
+        this.billingAddress = mapper.mapDtoToAddress(that.getBillingAddress());
 
         return this;
     }

@@ -1,7 +1,6 @@
 package com.example.springclouddemo.controller;
 
-import com.example.springclouddemo.domain.Customer;
-import com.example.springclouddemo.exceptions.CustomerAlreadyExistsException;
+import com.example.springclouddemo.dto.CustomerDto;
 import com.example.springclouddemo.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @AllArgsConstructor
@@ -32,7 +30,7 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer was posted successfully!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Customer.class)) }),
+                            schema = @Schema(implementation = CustomerDto.class)) }),
             @ApiResponse(responseCode = "400", description = "Customer at the body is not valid!",
                     content = @Content),
             @ApiResponse(responseCode = "409", description = "Customer was already posted!",
@@ -40,24 +38,22 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content) })
     @PostMapping("/customers")
-    public ResponseEntity<Customer> postCustomer(@Valid @RequestBody Customer customer) {
+    public ResponseEntity<CustomerDto> postCustomer(@Valid @RequestBody CustomerDto customer) {
         log.debug("REST request to save Customer : {}", customer);
-        if (Objects.nonNull(customer.getId())) {
-            throw new CustomerAlreadyExistsException();
-        } else return customerService.saveCustomer(customer);
+        return customerService.saveCustomer(customer);
     }
 
     @Operation(summary = "Updating customer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer was updated successfully!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Customer.class)) }),
+                            schema = @Schema(implementation = CustomerDto.class)) }),
             @ApiResponse(responseCode = "400", description = "Customer at the body is not valid!",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content) })
     @PutMapping("/customers")
-    public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody Customer customer) {
+    public ResponseEntity<CustomerDto> updateCustomer(@Valid @RequestBody CustomerDto customer) {
         log.debug("REST request to update Customer : {}", customer);
         return customerService.updateCustomer(customer);
     }
@@ -66,11 +62,11 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customers was returned successfully!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Customer.class)) }),
+                            schema = @Schema(implementation = CustomerDto.class)) }),
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content) })
     @GetMapping("/customers")
-    public ResponseEntity<List<Customer>> getAllCustomers() {
+    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         log.debug("REST request to get all Customers");
         return customerService.getAllCustomers();
     }
@@ -79,7 +75,7 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer was returned successfully!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Customer.class)) }),
+                            schema = @Schema(implementation = CustomerDto.class)) }),
             @ApiResponse(responseCode = "400", description = "ID is blank!",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Customer wasn't founded!",
@@ -87,7 +83,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content) })
     @GetMapping("/customers/{id}")
-    public ResponseEntity<Customer> getCustomer(@NotBlank @PathVariable String id) {
+    public ResponseEntity<CustomerDto> getCustomer(@NotBlank @PathVariable String id) {
         log.debug("REST request to get Customer : {}", id);
         return customerService.getCustomerById(id);
     }

@@ -1,9 +1,7 @@
-package com.example.springclouddemo.domain;
+package com.example.springclouddemo.entity;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import com.example.springclouddemo.enums.OrderStatus;
+import com.example.springclouddemo.enums.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +22,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order implements Serializable {
+public class OrderEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -32,7 +30,6 @@ public class Order implements Serializable {
     @Id
     private String id;
 
-    @NotBlank(message = "Customer id is required!")
     private String customerId;
 
     @CreatedDate
@@ -48,19 +45,15 @@ public class Order implements Serializable {
 
     private Boolean paymentStatus = Boolean.FALSE;
 
-    @NotNull(message = "Payment method is required!")
     private PaymentType paymentMethod;
 
-    @NotBlank(message = "Payment details are required!")
     private String paymentDetails;
 
-    @Valid
-    private Address shippingAddress;
+    private AddressEntity shippingAddress;
 
-    @NotEmpty
-    private Set<@Valid Product> products;
+    private Set<ProductEntity> products;
 
-    public Order copyOf(Order that) {
+    public OrderEntity copyOf(OrderEntity that) {
         this.version += 1;
         this.updatedAt = Instant.now();
         this.status = that.getStatus();

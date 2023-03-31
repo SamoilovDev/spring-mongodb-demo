@@ -1,7 +1,7 @@
 package com.example.springclouddemo.controller;
 
-import com.example.springclouddemo.domain.Health;
-import com.example.springclouddemo.domain.HealthStatus;
+import com.example.springclouddemo.dto.HealthDto;
+import com.example.springclouddemo.enums.HealthStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,18 +24,18 @@ public class HealthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "API is working well!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Health.class)) }),
+                            schema = @Schema(implementation = HealthDto.class)) }),
             @ApiResponse(responseCode = "500", description = "Server error",
                     content = @Content),
             @ApiResponse(responseCode = "502", description = "API isn't working correctly!",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Health.class)) })
+                            schema = @Schema(implementation = HealthDto.class)) })
     })
     @GetMapping(value = "/health", produces = "application/json")
-    public ResponseEntity<Health> getHealth() {
+    public ResponseEntity<HealthDto> getHealth() {
         log.debug("REST request to get the Health Status");
         return ResponseEntity.status(HEALTH_STATUS.getHttpStatus())
-                .body(Health.builder().status(HEALTH_STATUS).build());
+                .body(HealthDto.builder().status(HEALTH_STATUS).build());
     }
 
 }

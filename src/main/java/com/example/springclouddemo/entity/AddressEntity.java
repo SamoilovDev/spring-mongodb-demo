@@ -1,11 +1,11 @@
-package com.example.springclouddemo.domain;
+package com.example.springclouddemo.entity;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Address implements Serializable {
+public class AddressEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -22,23 +22,25 @@ public class Address implements Serializable {
     @Id
     private String id;
 
-    @NotNull(message = "Street name is required!")
+    @Field("street_name")
     private String streetName;
 
-    @NotNull(message = "Street number is required!")
+    @Field("street_number")
     private String streetNumber;
 
+    @Field("additional_information")
     private String additionalInfo;
 
-    @NotNull(message = "Zip code is required!")
+    @Field("zip_code")
     private String zipCode;
 
-    @NotNull(message = "City is required!")
+    @Field("city")
     private String city;
 
+    @Field("state")
     private String state;
 
-    @NotNull(message = "Country is required!")
+    @Field("country")
     private String country;
 
 }

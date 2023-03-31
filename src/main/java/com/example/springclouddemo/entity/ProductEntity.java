@@ -1,12 +1,12 @@
-package com.example.springclouddemo.domain;
+package com.example.springclouddemo.entity;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product implements Serializable {
+public class ProductEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -24,26 +24,28 @@ public class Product implements Serializable {
     @NotNull(message = "Id is required!")
     private String id;
 
-    @NotNull(message = "Name is required!")
+    @Field("name")
     private String name;
 
+    @Field("description")
     private String description;
 
+    @Field("model_number")
     private String modelNumber;
 
-    @NotNull
+    @Field("manufacture_name")
     private String manufacturerName;
 
-    @NotNull(message = "Price is required!")
-    @Min(value = 0, message = "Price cannot be less than zero")
+    @Field("price")
     private Double price;
 
+    @Field("detail_info")
     private String detailInfo;
 
+    @Field("image_url")
     private String imageUrl;
 
-    @NotNull(message = "Quantity is required!")
-    @Min(value = 0, message = "Quantity cannot be less than zero")
+    @Field("quantity")
     private Integer quantity;
 
 }
